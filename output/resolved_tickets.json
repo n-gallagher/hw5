@@ -1,0 +1,287 @@
+{
+  "run": "Problem 9 graded full run, 2026-10-25",
+  "database": "data/campus_customs_new.db (reset from data/campus_customs.db before the run)",
+  "checking_start": 3400.0,
+  "checking_end_computed": 160.0,
+  "checking_end_cash_accounts": 160.0,
+  "cash_matches": true,
+  "tickets": [
+    {
+      "id": 101,
+      "type": "customer_order",
+      "requester": "Tauhid Zaman",
+      "subject": "Bulldog tee",
+      "status": "resolved",
+      "boss_decision": "pay_pending_approval",
+      "outcome": "Not fulfillable now: 0 size-S tees on hand (shortfall 1), and the only apparel vendor (Bulldog Print Co) was on hold for overdue invoice 501. Accounting filed invoice 501 ($840) for approval; a human approved and paid it, which clears the hold. Customer draft posted (not sent); no delivery date promised.",
+      "run": {
+        "run_id": "150636c3cd58",
+        "started_utc": "2026-10-25T18:00:37.029+00:00",
+        "finished_utc": "2026-10-25T18:01:20.990+00:00",
+        "model": "gpt-6-luna",
+        "handoffs": 4,
+        "usage": {
+          "requests": 19,
+          "input_tokens": 53397,
+          "output_tokens": 5516
+        },
+        "est_cost_usd": 0.0081
+      },
+      "agents": [
+        {
+          "agent": "Boss",
+          "called_by": null,
+          "contribution": "The order cannot be fulfilled from current stock: there are 0 size S tees on hand and a shortfall of 1. Bulldog Print Co will not ship while invoice 501 remains open. Accounting prepared a payment request for human approval; no payment has been made. If that invoice is paid and the hold clears, the vendor's 5-day lead time applies, but no delivery date can yet be confirmed. The ticket is awaiting approval.",
+          "mcp_tools": [
+            "get_ticket",
+            "update_ticket_status"
+          ],
+          "handed_off_to": [
+            "Inventory",
+            "Accounting",
+            "Customer Service"
+          ]
+        },
+        {
+          "agent": "Inventory",
+          "called_by": "Boss",
+          "contribution": "Internal report for Customer Service: We cannot supply one size S from current stock (shortfall 1). Bulldog Print Co is the matching restock vendor, but it is currently blocked from shipping; its listed lead time is 5 days once the hold is cleared. Do not promise a restock or delivery date. Customer-safe wording: “We don’t have the size S in stock right now, and we can’t yet confirm when it will be available.” Do not include invoice details in customer-facing wording.",
+          "mcp_tools": [
+            "check_stock",
+            "check_vendor_hold",
+            "get_ticket",
+            "list_vendors"
+          ],
+          "handed_off_to": []
+        },
+        {
+          "agent": "Accounting",
+          "called_by": "Boss",
+          "contribution": "Payment request 1 for $840 is prepared and awaiting human approval. Cash covers the invoice without going negative; if approved and paid, $2,560 would remain. Invoice 501 is 3 days overdue. Bulldog Print Co is currently on hold for new shipments while this open invoice remains unpaid.",
+          "mcp_tools": [
+            "check_vendor_hold",
+            "get_cash_position",
+            "get_invoice",
+            "get_ticket",
+            "request_payment"
+          ],
+          "handed_off_to": []
+        },
+        {
+          "agent": "Customer Service",
+          "called_by": "Boss",
+          "contribution": "Posted draft 'Update on your Bulldog tee request' to Tauhid Zaman (not sent).",
+          "mcp_tools": [
+            "get_ticket",
+            "post_draft"
+          ],
+          "handed_off_to": [
+            "Inventory"
+          ]
+        }
+      ],
+      "human_approvals": [
+        {
+          "payment_request_id": 1,
+          "kind": "invoice",
+          "payee": "Bulldog Print Co",
+          "amount": 840.0,
+          "filed_by": "Accounting",
+          "status": "paid",
+          "approved_by": "Natty G",
+          "approved_at_utc": "2026-10-25T18:20:16+00:00",
+          "payment_id": 1,
+          "paid_from": "checking"
+        }
+      ],
+      "cash_change": -840.0,
+      "customer_drafts": [
+        {
+          "id": 1,
+          "ticket_id": 101,
+          "author": "customer_service",
+          "recipient": "Tauhid Zaman",
+          "subject": "Update on your Bulldog tee request",
+          "status": "draft"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "type": "rent_notice",
+      "requester": "Elm City Properties",
+      "subject": "Rent due",
+      "status": "resolved",
+      "boss_decision": "pay_pending_approval",
+      "outcome": "Rent of $2,400 on lease 1 (Chapel Street shop, Elm City Properties) was due 2026-09-02. Facilities confirmed it, Accounting filed it for approval, and a human approved and paid it; lease next_due moved to 2026-10-02.",
+      "run": {
+        "run_id": "fed2e4e6e84a",
+        "started_utc": "2026-10-25T18:09:37.511+00:00",
+        "finished_utc": "2026-10-25T18:10:12.122+00:00",
+        "model": "gpt-6-luna",
+        "handoffs": 2,
+        "usage": {
+          "requests": 11,
+          "input_tokens": 32150,
+          "output_tokens": 2709
+        },
+        "est_cost_usd": 0.0046
+      },
+      "agents": [
+        {
+          "agent": "Boss",
+          "called_by": null,
+          "contribution": "Facilities confirmed the $2,400 rent is due 2026-09-02, two days after desk date 2026-08-31. Accounting filed a payment request for human approval; no money has moved, and the ticket is awaiting approval. Cash is sufficient for the rent, including the other pending request, though paying both would leave only $160.",
+          "mcp_tools": [
+            "get_ticket",
+            "update_ticket_status"
+          ],
+          "handed_off_to": [
+            "Facilities",
+            "Accounting"
+          ]
+        },
+        {
+          "agent": "Facilities",
+          "called_by": "Boss",
+          "contribution": "Lease 1 confirms Chapel Street shop, landlord Elm City Properties, monthly rent 2400.0, due 2026-09-02 (2 days away), so rent is urgent. Current cash covers the rent, but any payment requires human approval through Accounting.",
+          "mcp_tools": [
+            "get_rent_due",
+            "get_ticket"
+          ],
+          "handed_off_to": []
+        },
+        {
+          "agent": "Accounting",
+          "called_by": "Boss",
+          "contribution": "Rent is affordable and request 2 has been filed for human approval only. Cash is $3,400 before payments; rent alone would leave $1,000. Considering all pending requests, pay the overdue invoice request first (invoice 501, $840; 3 days past due), leaving $2,560, then rent request 2 ($2,400), leaving $160. No blocker; do not treat either request as paid until a human approves it.",
+          "mcp_tools": [
+            "get_cash_position",
+            "get_invoice",
+            "get_rent_due",
+            "get_ticket",
+            "get_today",
+            "request_payment"
+          ],
+          "handed_off_to": []
+        }
+      ],
+      "human_approvals": [
+        {
+          "payment_request_id": 2,
+          "kind": "rent",
+          "payee": "Elm City Properties",
+          "amount": 2400.0,
+          "filed_by": "Accounting",
+          "status": "paid",
+          "approved_by": "Natty G",
+          "approved_at_utc": "2026-10-25T18:20:32+00:00",
+          "payment_id": 2,
+          "paid_from": "checking"
+        }
+      ],
+      "cash_change": -2400.0,
+      "customer_drafts": []
+    },
+    {
+      "id": 103,
+      "type": "price_override",
+      "requester": "Yale AI Club",
+      "subject": "Bulk hoodie discount",
+      "status": "resolved",
+      "boss_decision": "escalate_to_human",
+      "outcome": "Partial availability: 8 of 20 size-M hoodies on hand (shortfall 12). Restock was blocked by the vendor hold during the run, and no discount was approved (Accounting computed 62% off as the at-cost boundary only). Customer draft posted (not sent). The Boss escalated to a human; no payment or purchase was requested.",
+      "run": {
+        "run_id": "7f9f5b7f28b2",
+        "started_utc": "2026-10-25T18:15:14.151+00:00",
+        "finished_utc": "2026-10-25T18:16:52.171+00:00",
+        "model": "gpt-6-luna",
+        "handoffs": 5,
+        "usage": {
+          "requests": 26,
+          "input_tokens": 81840,
+          "output_tokens": 9431
+        },
+        "est_cost_usd": 0.0129
+      },
+      "agents": [
+        {
+          "agent": "Boss",
+          "called_by": null,
+          "contribution": "Only 8 of 20 requested units are on hand, leaving a shortfall of 12. Restocking is blocked because Bulldog Print Co cannot ship while overdue invoice 501 remains unpaid. Accounting reports that only $160 would remain after existing pending payment requests, which is not enough to cover the $840 invoice; no payment request for that invoice was prepared. The requester did not specify a discount, and no discount has been approved. Accounting calculated that 62.0% off would leave only $0.04 margin per hoodie, so it is a price boundary calculation, not an offer. Escalated for a human cash-allocation decision; no restock or delivery date is promised.",
+          "mcp_tools": [
+            "get_ticket",
+            "update_ticket_status"
+          ],
+          "handed_off_to": [
+            "Inventory",
+            "Accounting",
+            "Customer Service"
+          ]
+        },
+        {
+          "agent": "Inventory",
+          "called_by": "Boss",
+          "contribution": "Customer-usable facts: 8 hoodies, size M, are currently on hand in Aisle A; 12 more are needed to fulfill the requested 20, so the full quantity cannot be filled now. Bulldog Print Co is the apparel restock vendor with a 5-day lead time, but it currently cannot ship because of an unresolved open invoice. No restock date can be confirmed until that hold is cleared; the 5-day lead time applies after clearance.",
+          "mcp_tools": [
+            "check_stock",
+            "check_vendor_hold",
+            "get_ticket",
+            "get_today",
+            "list_vendors"
+          ],
+          "handed_off_to": []
+        },
+        {
+          "agent": "Accounting",
+          "called_by": "Boss",
+          "contribution": "The $22.04 price at a 62% discount is a calculation only, not an approved offer; ticket 103 contains no recorded discount approval. It leaves only $0.04 per unit ($0.80 total) above cost, a 0.2% margin, so do not represent it as approved. Customer-safe wording: “We’re reviewing pricing and availability for your order. No bulk discount has been approved yet; we’ll confirm any offer once it is approved.” Inventory shows 8 units in the linked snapshot for a request of 20; Inventory should confirm supply/availability.",
+          "mcp_tools": [
+            "check_discount",
+            "check_vendor_hold",
+            "get_cash_position",
+            "get_invoice",
+            "get_ticket"
+          ],
+          "handed_off_to": [
+            "Boss"
+          ],
+          "handoffs_blocked": [
+            {
+              "to": "Boss",
+              "reason": "boss is already working on this chain (boss -> customer_service -> accounting). Answer with what you have."
+            }
+          ]
+        },
+        {
+          "agent": "Customer Service",
+          "called_by": "Boss",
+          "contribution": "Posted draft 'Update on your bulk hoodie request' to Yale AI Club (not sent).",
+          "mcp_tools": [
+            "get_ticket",
+            "post_draft"
+          ],
+          "handed_off_to": [
+            "Inventory",
+            "Accounting"
+          ]
+        }
+      ],
+      "human_approvals": [],
+      "cash_change": 0,
+      "customer_drafts": [
+        {
+          "id": 2,
+          "ticket_id": 103,
+          "author": "customer_service",
+          "recipient": "Yale AI Club",
+          "subject": "Update on your bulk hoodie request",
+          "status": "draft"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "A first attempt at ticket 102 (run 517893a9e532) stopped before changing anything: PermissionError: [WinError 5] Access is denied: 'C:\\\\Users\\\\... (audit-file lock, since fixed). Logged as run_failed."
+  ]
+}

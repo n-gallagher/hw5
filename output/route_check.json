@@ -1,0 +1,324 @@
+{
+ "checked_at": "2026-10-25T17:33:01+00:00",
+ "base_url": "http://localhost:8000",
+ "started_with": "cd backend && uvicorn main:app --reload --port 8000",
+ "calls": [
+  {
+   "request": "GET /api/health",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "ok": true,
+    "model": "gpt-6-luna",
+    "busy_ticket": null
+   }
+  },
+  {
+   "request": "GET /api/tickets",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "tickets": [
+     {
+      "id": 101,
+      "type": "customer_order",
+      "requester": "Tauhid Zaman",
+      "subject": "Bulldog tee",
+      "sku": "CC-TEE-WHITE",
+      "size": "S",
+      "qty": 1,
+      "lease_id": null,
+      "invoice_id": 501,
+      "status": "open",
+      "notes": "Needs a tee in size S.",
+      "created_at": "2026-08-31T09:15:00-04:00",
+      "state": "open"
+     },
+     {
+      "id": 102,
+      "type": "rent_notice",
+      "requester": "Elm City Properties",
+      "subject": "Rent due",
+      "sku": null,
+      "size": null,
+      "qty": null,
+      "lease_id": 1,
+      "invoice_id": null,
+      "status": "open",
+      "notes": "Email: shop rent due in 2 days.",
+      "created_at": "2026-08-31T11:05:00-04:00",
+      "state": "open"
+     },
+     {
+      "id": 103,
+      "type": "price_override",
+      "requester": "Yale AI Club",
+      "subject": "Bulk hoodie discount",
+      "sku": "CC-HOOD-NAVY",
+      "size": "M",
+      "qty": 20,
+      "lease_id": null,
+      "invoice_id": null,
+      "status": "open",
+      "notes": "Student org wants 20 hoodies, size M, asking for a bulk discount.",
+      "created_at": "2026-08-31T16:55:00-04:00",
+      "state": "open"
+     }
+    ],
+    "count": 3,
+    "source": "tickets"
+   }
+  },
+  {
+   "request": "GET /api/cash",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "account": "checking",
+    "balance": 3400.0,
+    "as_of": "2026-08-31",
+    "pending_total": 0,
+    "balance_if_all_pending_paid": 3400.0,
+    "source": "cash_accounts"
+   }
+  },
+  {
+   "request": "POST /api/tickets/102/run",
+   "body": {
+    "wait": true
+   },
+   "status": 202,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "run_key": "t102-173228327903",
+    "ticket_id": 102,
+    "status": "done",
+    "started_at": "2026-10-25T17:32:28+00:00",
+    "finished_at": "2026-10-25T17:32:33+00:00",
+    "result": {
+     "run_id": "36f92fd0019c",
+     "model": "gpt-6-luna",
+     "agent": "boss",
+     "output": {
+      "ticket_id": 102,
+      "ask_summary": "Elm City Properties\u2019 rent notice for the Chapel Street shop; lease 1 rent is due in two days.",
+      "decision": "pay_pending_approval",
+      "rationale": "Facilities confirmed the lease rent is $2,400 due 2026-09-02, two days after today (2026-08-31), and not overdue. Accounting filed a rent payment request for human approval. No payment has been made. Cash covers rent, but there is also an open overdue $840 invoice; paying both would leave $160. Ticket moved to awaiting_approval.",
+      "assignments": [
+       {
+        "agent": "facilities",
+        "task": "Confirm lease 1 landlord, rent, due date, and due status as of 2026-08-31."
+       },
+       {
+        "agent": "accounting",
+        "task": "Assess available cash and commitments for lease 1 rent and prepare payment request for human approval if cash allows."
+       }
+      ],
+      "key_facts": [
+       {
+        "label": "Landlord",
+        "value": "Elm City Properties",
+        "source": "leases (Facilities report)"
+       },
+       {
+        "label": "Monthly rent",
+        "value": "2400.0",
+        "source": "leases (Facilities report)"
+       },
+       {
+        "label": "Next due",
+        "value": "2026-09-02",
+        "source": "leases (Facilities report)"
+       },
+       {
+        "label": "Days until due",
+        "value": "2",
+        "source": "desk.date_today + leases (Facilities report)"
+       },
+       {
+        "label": "Overdue",
+        "value": "false",
+        "source": "leases + desk.date_today (Facilities report)"
+       },
+       {
+        "label": "Cash balance",
+        "value": "$3,400.00 in checking as of 2026-08-31",
+        "source": "cash_accounts via Accounting"
+       },
+       {
+        "label": "Rent payment request",
+        "value": "Request 1, pending; no money has moved",
+        "source": "payment_requests via Accounting"
+       },
+       {
+        "label": "Cash after rent and invoice, if both are paid",
+        "value": "$160.00 ($3,400 \u2212 $840 \u2212 $2,400)",
+        "source": "cash_accounts and invoice/lease amounts via Accounting"
+       },
+       {
+        "label": "Open overdue invoice commitment",
+        "value": "Invoice 501, Bulldog Print Co, $840.00, due 2026-08-28, open and 3 days past due",
+        "source": "invoices, vendors, desk via Accounting"
+       }
+      ],
+      "payments_needing_approval": [
+       {
+        "payee": "Elm City Properties",
+        "amount": 2400.0,
+        "reference_kind": "lease",
+        "reference_id": 1,
+        "reason": "Ticket 102 rent due 2026-09-02; filed for human approval.",
+        "cash_before": 3400.0,
+        "cash_after": 1000.0,
+        "status": "awaiting_human_approval",
+        "refusal_reason": null
+       }
+      ],
+      "customer_draft": null,
+      "next_steps": [
+       "Human approver: review and approve or reject the $2,400 rent payment request. No payment has been made.",
+       "Accounting: note the separate open overdue $840 invoice 501; cash after both commitments would be $160.",
+       "Boss: keep ticket 102 awaiting approval until the payment request is decided."
+      ],
+      "open_questions": [
+       "Human approval decision for rent payment request 1 is pending."
+      ]
+     },
+     "handoffs": 2,
+     "usage": {
+      "requests": 11,
+      "input_tokens": 31455,
+      "output_tokens": 3213
+     }
+    },
+    "run_id": "36f92fd0019c"
+   }
+  },
+  {
+   "request": "GET /api/runs/t102-173228327903",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": "{\"run_key\": \"t102-173228327903\", \"ticket_id\": 102, \"status\": \"done\", \"started_at\": \"2026-10-25T17:32:28+00:00\", \"finished_at\": \"2026-10-25T17:32:33+00:00\", \"result\": {\"run_id\": \"36f92fd0019c\", \"model\": \"gpt-6-luna\", \"agent\": \"boss\", \"output\": {\"ticket_id\": 102, \"ask_summary\": \"Elm City Properties\\u2019 rent notice for the Chapel Street shop; lease 1 rent is due in two days.\", \"decision\": \"pay_pending_approval\", \"rationale\": \"Facilities confirmed the lease rent is $2,400 due 2026-09-02, two days after today (2026-08-31), and not overdue. Accounting filed a rent payment request for human approva ...[truncated]"
+  },
+  {
+   "request": "GET /api/events?run_id=36f92fd0019c&limit=8",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": "{\"events\": [{\"ts\": \"2026-10-25T17:32:33.071+00:00\", \"run_id\": \"36f92fd0019c\", \"ticket_id\": 102, \"agent\": \"accounting\", \"chain\": [\"boss\", \"accounting\"], \"event\": \"loop_step\", \"said\": null, \"tools_used\": [\"final_result\"], \"tool_calls\": [{\"tool\": \"final_result\", \"args\": {\"cash_balance\": 3400, \"cash_as_of\": \"2026-08-31\", \"payment_requests\": [{\"payee\": \"Elm City Properties\", \"amount\": 2400, \"reference_kind\": \"lease\", \"reference_id\": 1, \"reason\": \"Ticket 102 rent due 2026-09-02; filed for human approval.\", \"cash_before\": 3400, \"cash_after\": 1000, \"status\": \"awaiting_human_approval\"}], \"cash_after_all_requests\": 1000, \"facts\": [{\"label\": \"Rent due\", \"value\": \"$2,400.00; lease 1; due 2026-09-02 (2 days away)\", \"source\": \"leases, desk via get_rent_due\"}, {\"label\": \"Cash balance\", \"value\": \"$3,400.00 in checking as of 2026-08-31\", \"source\": \"cash_accounts via get_cash_position\"}, {\"label\": \"Rent payment request\", \"value\": \"Request 1, pending; no money has moved\", \"source\": \"request_payment\"}, {\"label\": \"Open overdue invoice commitment\", \"value\": \"Invoice 501, Bulldog Print Co, $840.00, due 2026-08-28, open and 3 days past due\", \"source\": \"invoices, vendors, desk via get_invoice\"}, {\"label\": \"Cash after rent and invoice, if both are paid\", \"value\": \"$160.00 ($3,400 \\u2212 $840 \\u2212 $2,400)\", \"source\": \"cash_accounts and invoice/lease amounts from get_cash_position, get_invoice, get_rent_due\"}], \"recommendation\": \"Cash covers the rent. Rent payment request 1 is awaiting human approval; cash after that request alone is $1,000. The open invoice is already overdue and should be prioritized: paying invoice 501 first would leave $2,560, then paying rent would leave $160. Both commitments fit within current cash, but the invoice has not been requested for payment here.\"}, \"call_id\": \"call_XVAqlYtguTbJm6RMdLLFELic\"}], \"tokens\": {\"input\": 4097, \"output\": 615, \"cached\": 3304}}, {\"ts\": \"2026-10-25T17:32:33.095+00:00\", \"run_id\": \"36f92fd0019c\", \"ticket_id\": 102, \"agent\": \"accounting\", \"chain\": [\"boss\", \"accounting\"], \"event\": \"agent_done\", \"output\": {\"cash_balance\": 3400.0, \"cash_as_of\": \"2026-08-31\", \"payment_requests\": [{\"payee\": \"Elm City Properties\", \"amount\": 2400.0, \"reference_kind\": \"lease\", \"reference_id\": 1, \"reason\": \"Ticket 102 rent due 2026-09-02; filed for human approval.\", \"cash_before\": 3400.0, \"cash_after\": 1000.0, \"status\": \"awaiting_human_approval\", \"refusal_reason\": null}], \"cash_after_all_requests\": 1000.0, \"discount_requested_pct\": null, \"unit_cost\": null, ...[truncated]"
+  },
+  {
+   "request": "GET /api/payments?status=pending",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "payment_requests": [
+     {
+      "id": 1,
+      "ticket_id": 102,
+      "kind": "rent",
+      "ref_id": 1,
+      "payee": "Elm City Properties",
+      "amount": 2400.0,
+      "sku": null,
+      "size": null,
+      "qty": null,
+      "reason": "Ticket 102: rent for lease 1 due 2026-09-02; cash covers rent while reserving for the open overdue invoice.",
+      "requested_by": "accounting",
+      "status": "pending",
+      "created_at": "2026-10-25T17:32:32+00:00",
+      "decided_by": null,
+      "decided_at": null,
+      "decision_note": null,
+      "payment_id": null
+     }
+    ],
+    "payments": [],
+    "source": "payment_requests, payments"
+   }
+  },
+  {
+   "request": "POST /api/payments/1/approve",
+   "body": {
+    "approver": "Natalie Gallagher"
+   },
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "paid": true,
+    "request_id": 1,
+    "payment_id": 1,
+    "amount": 2400.0,
+    "payee": "Elm City Properties",
+    "approved_by": "Natalie Gallagher",
+    "account": "checking",
+    "cash_before": 3400.0,
+    "cash_after": 1000.0,
+    "effect": {
+     "lease_id": 1,
+     "old_next_due": "2026-09-02",
+     "new_next_due": "2026-10-02"
+    },
+    "source": "payments, cash_accounts, invoices/leases, payment_requests"
+   }
+  },
+  {
+   "request": "GET /api/cash",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "account": "checking",
+    "balance": 1000.0,
+    "as_of": "2026-08-31",
+    "pending_total": 0,
+    "balance_if_all_pending_paid": 1000.0,
+    "source": "cash_accounts"
+   }
+  },
+  {
+   "request": "POST /api/payments/1/reject",
+   "body": {
+    "approver": "Natalie Gallagher",
+    "note": "route check"
+   },
+   "status": 409,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "detail": "Request 1 is not pending."
+   }
+  },
+  {
+   "request": "POST /api/reset",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "reset": true,
+    "from": "data/campus_customs.db",
+    "to": "data/campus_customs_new.db",
+    "sha256": "23686a90d698f7fa6f901a3f0a9774db9cbb31e13151c9e5717275f3321f360a",
+    "audit_trail_kept": true
+   }
+  },
+  {
+   "request": "GET /api/cash",
+   "body": null,
+   "status": 200,
+   "cors_allow_origin": "http://localhost:5173",
+   "response": {
+    "account": "checking",
+    "balance": 3400.0,
+    "as_of": "2026-08-31",
+    "pending_total": 0,
+    "balance_if_all_pending_paid": 3400.0,
+    "source": "cash_accounts"
+   }
+  }
+ ]
+}

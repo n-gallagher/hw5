@@ -1,0 +1,29 @@
+# Secrets: never commit API keys. Only .env.example (key names, no values) goes up.
+.env
+.env.*
+!.env.example
+
+# Course databases DO go up (data/campus_customs.db + data/campus_customs_new.db),
+# as the assignment requires. Zips do not.
+*.zip
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+output/audit_trail.backlog.jsonl
+output/*.tmp
+
+# Node / build
+node_modules/
+dist/
+
+# Local only: assignment screenshots, editor and vibe-coder settings
+screenshots/
+.claude/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.tmp
