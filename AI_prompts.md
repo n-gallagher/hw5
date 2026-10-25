@@ -250,3 +250,19 @@ Log of what I typed to my vibe coder for Homework 5 (Campus Customs Multi-Agent 
 
 **What was lacking after the first:** My first #3 (reorder ticket 103's hoodies) wasn't a new problem and would have been refused at $160 checking, and my next version assumed the team could find zero-stock items on its own, when `check_stock` only checks items I name.
 
+---
+
+## Problem 11: Submit to GitHub
+
+**Prompt:**
+
+> pls get this up on a public github repo so the graders can clone it - before pushing check the folder matches the layout in the assignment (see it in the snipping), flag anything missing or extra.
+>
+> for the love of god do NOT push my real .env, put a .env.example in with just the key names and no real values like we did before, and make sure .gitignore keeps out .env, node_modules and the venv
+>
+> this time BOTH db files in data/ do need to go up, the original and the working copy, so dont ignore them -- also double check theres no api key hiding anywhere else like in .mcp.json or the audit trail. the README should explain how to copy the original db over the working copy for a clean run, start the mcp server start the fastapi backend start the react board and reset the db before a full three ticket run
+>
+> once its pushed put the repo url in output/github_url.txt and give it to me so i can put it in canvas
+
+**Follow-up:** None needed.
+
