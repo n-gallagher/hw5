@@ -35,6 +35,8 @@ cp .env.example .env          # Windows: copy .env.example .env
 
 `.env` is gitignored; only `.env.example` (key name, no value) is in the repo. The backend also looks for `.env` one folder up.
 
+No Portkey key? Copy `.env.example` to `.env` as is. With the placeholder value the backend, MCP server and board all start, so you can browse the tickets, the cash and the audit trail, approve payments and reset the database. Only running the agent team needs a real key (a run with the placeholder fails cleanly and changes nothing).
+
 ## 2. Copy the original database over the working copy (clean run)
 
 The tools change `data/campus_customs_new.db` as tickets get resolved. To start clean, copy the untouched original over it, using either of these:
@@ -48,6 +50,8 @@ cp data/campus_customs.db data/campus_customs_new.db    # Windows: copy data\cam
 ```
 
 `reset_db` also checks that the copy matches the original byte for byte. After a reset, checking is $3,400.00 and tickets 101, 102 and 103 are open.
+
+The committed `campus_customs_new.db` is in its state after the graded run (checking $160.00, all three tickets resolved), so it matches the Cash tab in `output/desk_tickets.html`. `output/mcp_smoke.json` was recorded on a freshly reset copy, so reset first to reproduce its values.
 
 ## 3. Start the MCP server
 

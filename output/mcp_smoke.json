@@ -6,6 +6,7 @@
   "db_sha256_before": "23686a90d698f7fa6f901a3f0a9774db9cbb31e13151c9e5717275f3321f360a",
   "db_sha256_after": "23686a90d698f7fa6f901a3f0a9774db9cbb31e13151c9e5717275f3321f360a",
   "db_unchanged": true,
+  "db_state_note": "These tests ran on a freshly reset working copy: its sha256 above equals data/campus_customs.db, so every tool output matched campus_customs_new.db at test time (checking $3,400, rent due 2026-09-02, invoice 501 open). The committed campus_customs_new.db is in its state after the graded Problem 9 run (checking $160, invoice 501 paid, rent next due 2026-10-02). Run `python -m backend.reset_db` to restore the values these tests check.",
   "tests": [
     {
       "tool": "check_stock",
