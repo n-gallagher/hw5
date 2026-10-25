@@ -1,6 +1,6 @@
 # The Lethe Desk: dashboard design
 
-`frontend/`: React + Vite + TypeScript. Start it with `npm run dev` (port 5173). It calls the FastAPI backend at `http://localhost:8000` (`VITE_API_URL` in `frontend/.env.development`, with the same default in `src/api.ts`), and the backend's CORS setting allows `http://localhost:5173`.
+`frontend/`: React + Vite + TypeScript. Start it with `npm run dev` (port 5173). It calls the FastAPI backend at `http://localhost:8000` (the default in `src/api.ts`; set `VITE_API_URL` to point it somewhere else), and the backend's CORS setting allows `http://localhost:5173`.
 
 ## The idea: a Ninth House desk
 

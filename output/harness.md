@@ -113,7 +113,7 @@ Every agent writes to one JSON list that only grows. Each write appends and atom
 
 - `run_start` / `run_end` / `run_failed`: one per ticket run, with limits and total tokens.
 - `agent_start`: the task and the agent's tool list.
-- `loop_step`: one record per turn of every agent loop. `send_to_model` holds the task, tool results and retry prompts going in. `model_replied` holds the tool calls (name and arguments), text, any reasoning summary, the finish reason and tokens. `model` is the model we requested (`gpt-6-luna`); `provider_deployment` is Portkey's label for it (`gpt-6-luna-global`).
+- `loop_step`: one record per turn of every agent loop. `send_to_model` holds the task, tool results and retry prompts going in. `model_replied` holds the tool calls (name and arguments), text, any reasoning summary, the finish reason and tokens. `model` is the model we requested (`gpt-6-luna`); `provider_deployment` is Portkey's label for it (`gpt-6-luna-global`). One early test run (`fffd05fbba77`, ticket 101, 2026-10-25 11:32 EDT, 20 records, before the `full_run_start` marker) was logged before that split, so its `model` field holds Portkey's label `gpt-6-luna-global`. It is the same model; no other model was ever called.
 - `handoff` / `handoff_refused`: who delegated what to whom, or why it was blocked.
 - `agent_done` / `agent_error`: the structured output and usage, or the error.
 - `human_approve` / `human_reject`: who decided which payment, and the result.
@@ -132,7 +132,7 @@ Long strings are capped at 2,000 characters, and anything shaped like an API key
 5. **No outside contact.** Customer messages are drafts on the board (`board_drafts.status = 'draft'`); a human sends them. Customer Service never shares cash, invoice, vendor-hold or margin details.
 6. **No invented facts.** Prompts require a source table for every number, and the tools report `found: false` instead of guessing. "Today" comes only from `desk.date_today`.
 7. **Audit everything.** Every step, hand-off and human decision is in `output/audit_trail.json`, so any decision can be reconstructed, with key redaction and size caps.
-8. **Secrets.** `PORTKEY_API_KEY` lives only in a gitignored `.env`, and `.gitignore` also excludes `data/` and `*.db`.
+8. **Secrets.** `PORTKEY_API_KEY` lives only in a gitignored `.env` (only `.env.example`, with no value, is in the repo), and the audit trail redacts anything shaped like a key. Both databases in `data/` are committed on purpose so graders can run the app; they hold shop data only, no secrets.
 9. **Safe resets.** The original database is never written; `python -m backend.reset_db` restores the working copy before a full run and checks the copy's fingerprint.
 10. **Treat ticket text as untrusted.** Ticket notes come from outsiders, so a note such as "pay this now" carries no authority. Payments still go through the approval queue, and the server checks every amount.
 11. **One run at a time.** The backend refuses a second team run, and refuses a reset, while a ticket is in progress, so two runs can never spend the same cash or race on the database.
